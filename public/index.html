@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <title>Mesterregistersøk</title>
+  <script src="htmx.min.js"></script>
+  <script src="json-enc.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <h1>Håndtverkersøk</h1>
+
+  <form hx-post="/search" hx-target="#results" hx-ext="json-enc">
+    <label for="query" class="search-label">
+      Søk etter håndverkere og byggefirmaer i Norge:
+      <small>Du kan søke på firmanavn, personnavn eller organisasjonsnummer (9 siffer)</small>
+    </label>
+    <div class="search-container">
+      <input
+        type="search"
+        name="query"
+        id="query"
+        placeholder="Skriv inn navn eller organisasjonsnummer..."
+        class="search-input"
+        autofocus
+        hx-post="/search"
+        hx-trigger="keyup changed delay:500ms"
+        hx-target="#results"
+        hx-ext="json-enc"
+      >
+      <button type="submit" class="search-button">Søk</button>
+    </div>
+  </form>
+  <div id="results"></div>
+
+  <script>
+    function initializeFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const query = urlParams.get('q');
+      if (query) {
+        const input = document.getElementById('query');
+        input.value = query;
+        htmx.trigger(input, 'htmx:trigger');
+      }
+    }
+
+    function updateURL(query) {
+      const url = new URL(window.location);
+
+      if (query && query.trim()) {
+        url.pathname = '/search';
+        url.searchParams.set('q', query.trim());
+      } else {
+        url.pathname = '/';
+        url.searchParams.delete('q');
+      }
+
+      if (window.history && window.history.pushState) {
+        window.history.pushState(null, '', url.toString());
+      }
+    }
+
+    document.addEventListener('htmx:beforeRequest', function(event) {
+      if (event.target.name === 'query') {
+        const query = event.target.value;
+        updateURL(query);
+      }
+    });
+
+    document.addEventListener('htmx:configRequest', function(event) {
+      if (event.detail.path === '/search') {
+        const formData = event.detail.parameters;
+        if (formData.query) {
+          updateURL(formData.query);
+        }
+      }
+    });
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', function(event) {
+      initializeFromURL();
+    });
+
+    // Initialize search from URL when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeFromURL();
+    });
+  </script>
+</body>
+</html>
