@@ -1,5 +1,5 @@
 import { readFile as rf } from "fs/promises";
-import { resolve, join } from "path";
+import { resolve } from "path";
 
 export async function readFile(filePath: string): Promise<string> {
   try {
@@ -14,7 +14,7 @@ export async function readFile(filePath: string): Promise<string> {
 
     return await rf(resolvedPath, "utf-8");
   } catch (error) {
-    console.error(`Error reading file ${filePath} (resolved: ${resolvedPath}):`, error);
+    console.error(`Error reading file ${filePath}`, error);
     throw error;
   }
 }
