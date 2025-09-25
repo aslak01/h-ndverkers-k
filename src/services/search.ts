@@ -65,4 +65,3 @@ export async function performSearch(query: string): Promise<SearchResults> {
     financialDataMap,
   };
 }
-

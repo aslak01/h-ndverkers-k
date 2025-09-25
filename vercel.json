@@ -1,0 +1,13 @@
+{
+  "buildCommand": "npm run build",
+  "rewrites": [
+    {
+      "source": "/search",
+      "destination": "/api/search"
+    },
+    {
+      "source": "/((?!api).*)",
+      "destination": "/api/index"
+    }
+  ]
+}

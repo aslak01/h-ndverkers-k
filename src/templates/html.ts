@@ -20,4 +20,3 @@ export async function generateSearchPage(query: string): Promise<string> {
 
   return htmlWithResults;
 }
-

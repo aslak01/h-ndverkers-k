@@ -76,4 +76,3 @@ export async function getFinancialDataForCompanies(
 
   return financialDataMap;
 }
-
