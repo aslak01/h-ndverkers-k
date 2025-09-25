@@ -8,7 +8,9 @@
   "main": "index.ts",
   "scripts": {
     "prepare": "cp node_modules/htmx.org/dist/htmx.min.js public/htmx.min.js && cp node_modules/htmx-ext-json-enc/json-enc.js public/json-enc.js",
-    "start": "node --watch server.ts"
+    "start": "node --watch --import=tsx server.ts",
+    "build": "tsc",
+    "dev": "node --watch --import=tsx server.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.3",
@@ -19,10 +21,9 @@
   },
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest",
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
     "prettier": "^3.6.2"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
   }
 }
