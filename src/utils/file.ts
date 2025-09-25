@@ -8,4 +8,3 @@ export async function readFile(filePath: string): Promise<string> {
     throw error;
   }
 }
-

@@ -13,4 +13,3 @@ export const API_ENDPOINTS = {
 export const SERVER_CONFIG = {
   PORT: 8787,
 } as const;
-

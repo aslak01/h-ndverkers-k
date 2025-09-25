@@ -33,4 +33,3 @@ export function formatAlgoliaResults(algoliaData: AlgoliaResponseType): string {
       .join("") || ""
   );
 }
-

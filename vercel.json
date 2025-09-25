@@ -1,0 +1,21 @@
+{
+  "functions": {
+    "api/index.ts": {
+      "runtime": "nodejs22.x"
+    },
+    "api/search.ts": {
+      "runtime": "nodejs22.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/search",
+      "destination": "/api/search"
+    },
+    {
+      "source": "/((?!api).*)",
+      "destination": "/api/index"
+    }
+  ]
+}
+

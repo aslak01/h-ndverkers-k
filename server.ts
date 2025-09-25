@@ -1,7 +1,7 @@
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
-import { createRoutes } from "./src/routes/index.js";
-import { SERVER_CONFIG } from "./src/config/constants.js";
+import { createRoutes } from "./src/routes/index.ts";
+import { SERVER_CONFIG } from "./src/config/constants.ts";
 
 const app = createRoutes();
 
@@ -17,4 +17,3 @@ serve(
     console.log(`🚀 Server running at http://localhost:${info.port}`);
   },
 );
-

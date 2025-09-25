@@ -41,4 +41,3 @@ export function filterSGRegisterResults(
 export type FilteredSGRegisterResultType = ReturnType<
   typeof filterSGRegisterResults
 >;
-
