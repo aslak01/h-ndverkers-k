@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
 
-const app = new Hono();
+const app = new Hono().basePath("/api/search");
 
 // Handle GET requests with query parameters (for linkable URLs)
 app.get("/", async (c) => {
