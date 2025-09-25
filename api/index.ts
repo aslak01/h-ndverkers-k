@@ -8,7 +8,8 @@ app.get("/", async (c) => {
   const query = c.req.query("q");
   if (query) {
     try {
-      const { generateSearchPage } = await import("../src/templates/html.ts");
+      const path = process.cwd() + "/src/templates/html.ts";
+      const { generateSearchPage } = await import(path);
       return c.html(await generateSearchPage(query));
     } catch (error) {
       console.error("Error generating search page:", error);
@@ -17,7 +18,8 @@ app.get("/", async (c) => {
   }
 
   try {
-    const { readFile } = await import("../src/utils/file.ts");
+    const path = process.cwd() + "/src/utils/file.ts";
+    const { readFile } = await import(path);
     return c.html(await readFile("./public/index.html"));
   } catch (error) {
     console.error("Error reading index file:", error);
