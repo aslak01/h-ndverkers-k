@@ -25,5 +25,8 @@
     "tsx": "^4.0.0",
     "typescript": "^5.0.0",
     "prettier": "^3.6.2"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }
