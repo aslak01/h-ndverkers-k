@@ -1,31 +1,35 @@
-import { Hono } from "hono";
-import { handle } from "hono/vercel";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { generateSearchPage } from '../src/templates/html';
+import { readFile } from '../src/utils/file';
 
-const app = new Hono().basePath("/api");
-
-// Handle GET requests to home page
-app.get("/", async (c) => {
-  const query = c.req.query("q");
-  if (query) {
-    try {
-      const path = process.cwd() + "/src/templates/html.ts";
-      const { generateSearchPage } = await import(path);
-      return c.html(await generateSearchPage(query));
-    } catch (error) {
-      console.error("Error generating search page:", error);
-      return c.html(`<div class="error">Search temporarily unavailable</div>`);
-    }
-  }
-
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    const path = process.cwd() + "/src/utils/file.ts";
-    const { readFile } = await import(path);
-    return c.html(await readFile("./public/index.html"));
-  } catch (error) {
-    console.error("Error reading index file:", error);
-    return c.html(`<div class="error">Page temporarily unavailable</div>`);
-  }
-});
+    const { q: query } = req.query;
 
-export default handle(app);
+    if (query && typeof query === 'string') {
+      try {
+        const searchPageHtml = await generateSearchPage(query);
+        res.setHeader('Content-Type', 'text/html');
+        return res.status(200).send(searchPageHtml);
+      } catch (error) {
+        console.error("Error generating search page:", error);
+        res.setHeader('Content-Type', 'text/html');
+        return res.status(500).send(`<div class="error">Search temporarily unavailable</div>`);
+      }
+    }
+
+    try {
+      const indexHtml = await readFile("./public/index.html");
+      res.setHeader('Content-Type', 'text/html');
+      return res.status(200).send(indexHtml);
+    } catch (error) {
+      console.error("Error reading index file:", error);
+      res.setHeader('Content-Type', 'text/html');
+      return res.status(500).send(`<div class="error">Page temporarily unavailable</div>`);
+    }
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return res.status(500).send("Internal Server Error");
+  }
+}
 

@@ -1,54 +1,37 @@
-import { Hono } from "hono";
-import { handle } from "hono/vercel";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { performSearch } from '../src/services/search';
+import { formatSearchResults } from '../src/formatters/results';
 
-const app = new Hono().basePath("/api/search");
-
-// Handle GET requests with query parameters (for linkable URLs)
-app.get("/", async (c) => {
-  const query = c.req.query("q");
-  if (query) {
-    try {
-      const path = process.cwd() + "/src/templates/html.ts";
-      const { generateSearchPage } = await import(path);
-      return c.html(await generateSearchPage(query));
-    } catch (error) {
-      console.error("Error generating search page:", error);
-      return c.html(`<div class="error">Search temporarily unavailable</div>`);
-    }
-  }
-
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    const path = process.cwd() + "/src/utils/file.ts";
-    const { readFile } = await import(path);
-    return c.html(await readFile("./public/index.html"));
-  } catch (error) {
-    console.error("Error reading index file:", error);
-    return c.html(`<div class="error">Page temporarily unavailable</div>`);
-  }
-});
+    if (req.method === 'POST') {
+      const { query: rawQuery } = req.body;
 
-// Handle POST requests to /search
-app.post("/", async (c) => {
-  try {
-    const { query: rawQuery } = await c.req.json();
+      if (typeof rawQuery !== "string") {
+        res.setHeader('Content-Type', 'application/json');
+        return res.status(400).json({ error: "Invalid query format" });
+      }
 
-    if (typeof rawQuery !== "string") {
-      return c.html(`<div class="error">Invalid query format</div>`);
+      try {
+        const results = await performSearch(rawQuery);
+        const searchResults = formatSearchResults(results, rawQuery);
+        res.setHeader('Content-Type', 'text/html');
+        return res.status(200).send(searchResults);
+      } catch (error) {
+        console.error("Search error:", error);
+        res.setHeader('Content-Type', 'application/json');
+        return res.status(500).json({ error: "Search failed. Please try again." });
+      }
     }
 
-    const searchPath = process.cwd() + "/src/services/search.ts";
-    const resultsPath = process.cwd() + "/src/formatters/results.ts";
-    const { performSearch } = await import(searchPath);
-    const { formatSearchResults } = await import(resultsPath);
-
-    const results = await performSearch(rawQuery);
-    const searchResults = formatSearchResults(results, rawQuery);
-    return c.html(searchResults);
+    // Only allow POST requests for search
+    res.setHeader('Allow', ['POST']);
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   } catch (error) {
-    console.error("Search error:", error);
-    return c.html(`<div class="error">Search failed. Please try again.</div>`);
+    console.error("Unexpected error:", error);
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(500).json({ error: "Internal Server Error" });
   }
-});
-
-export default handle(app);
+}
 
