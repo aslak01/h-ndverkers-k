@@ -9,7 +9,8 @@
   "scripts": {
     "prepare": "cp node_modules/htmx.org/dist/htmx.min.js public/htmx.min.js && cp node_modules/htmx-ext-json-enc/json-enc.js public/json-enc.js",
     "start": "node --watch --import=tsx server.ts",
-    "build": "tsc",
+    "build": "node build.js",
+    "build:tsc": "tsc",
     "dev": "node --watch --import=tsx server.ts"
   },
   "dependencies": {
