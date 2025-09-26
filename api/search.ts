@@ -1,6 +1,4 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { performSearch } from '../src/services/search';
-import { formatSearchResults } from '../src/formatters/results';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
@@ -13,6 +11,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       try {
+        const { performSearch } = await import('../src/services/search.js');
+        const { formatSearchResults } = await import('../src/formatters/results.js');
+
         const results = await performSearch(rawQuery);
         const searchResults = formatSearchResults(results, rawQuery);
         res.setHeader('Content-Type', 'text/html');

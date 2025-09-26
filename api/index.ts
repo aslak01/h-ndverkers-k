@@ -1,6 +1,4 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { generateSearchPage } from '../src/templates/html';
-import { readFile } from '../src/utils/file';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
@@ -8,6 +6,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (query && typeof query === 'string') {
       try {
+        const { generateSearchPage } = await import('../src/templates/html.js');
         const searchPageHtml = await generateSearchPage(query);
         res.setHeader('Content-Type', 'text/html');
         return res.status(200).send(searchPageHtml);
@@ -19,6 +18,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
+      const { readFile } = await import('../src/utils/file.js');
       const indexHtml = await readFile("./public/index.html");
       res.setHeader('Content-Type', 'text/html');
       return res.status(200).send(indexHtml);
