@@ -1,13 +1,5 @@
 {
   "buildCommand": "npm run build",
-  "functions": {
-    "api/index.ts": {
-      "runtime": "@vercel/node"
-    },
-    "api/search.ts": {
-      "runtime": "@vercel/node"
-    }
-  },
   "rewrites": [
     {
       "source": "/search",
