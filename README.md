@@ -1,5 +1,7 @@
 # hvsk
 
+Spar tid og søk i flere registre samtidig.
+
 To install dependencies:
 
 ```bash
